@@ -5,6 +5,10 @@ var app = express();
 //Le decimos a la aplicacion que las visas se van a hacer con jade
 app.set("view engine", "jade");
 
+/*Definimos en donde se van a guardar los archivos estaticos con el metodo
+static de express*/
+app.use(express.static("public"));
+
 /* Se ejecuta al momento de ingresar al servidor "localhost:8080" y devuelve una respuesta 
 en este caso hace el render del index */ 
 app.get("/", function(solicitud, respuesta){
