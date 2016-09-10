@@ -1,0 +1,23 @@
+{
+  "name": "primerawebnode",
+  "version": "1.0.0",
+  "description": "Primera pagina web con Nodejs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivanlynch/PaginaConNode.git"
+  },
+  "author": "ivanlynch",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ivanlynch/PaginaConNode/issues"
+  },
+  "homepage": "https://github.com/ivanlynch/PaginaConNode#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "nodemon": "^1.10.2"
+  }
+}
