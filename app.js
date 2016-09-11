@@ -26,11 +26,16 @@ app.set("view engine", "jade");
 static de express*/
 app.use(express.static("public"));
 
-/* Se ejecuta al momento de ingresar al servidor "localhost:8080" y devuelve una respuesta 
-en este caso hace el render del index */ 
+/* Render del Index */ 
 app.get("/", function(solicitud, respuesta){
 	respuesta.render("index");
 });
+
+/* Render del Menu*/
+
+app.get("/menu/new", function(solicitud, respuesta){
+	respuesta.render("menu/new");
+})
 
 //Le decimos a express que escuche en el puerto 8080
 app.listen(8080);
