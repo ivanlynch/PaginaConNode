@@ -14,18 +14,24 @@ html(lang="en")
 		link(href='http://fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css')
 		//- Declaracion del ANIMATE ubicado en la carpeta public
 		link(href='/css/animate.css' rel='stylesheet' type='text/css')
-	body
+	body 
+		//- Declaracion de contenido de la Pagina Principal
 		section(class="full-height text-center" id="main-content")
 			div(class="data")
 				div(class="col-md-3 center-block no-float top-space")
+					//- Declaracion de la Imagen Principal
 					img(src="imgs/icecream.png" class="animated fadeIn")
+					//- Titulos bajo la imagen
 					h1(class="pacifico big green animated fadeIn delay-1") Iván Lynch
 					div(class="animated fadeInDown delay-2")
 						h2 ¡Bienvenidos a mi Portfolio!
+						//- Barra de navegacion principal
 						nav
 							a(href="./menu/new" class="right-space") Menú
 							a(href="contacto.html" class="right-space") Contacto
 							a(href="" class="right-space") Acerca de
+		//- Importe de libreria jquery
 		script(src="https://code.jquery.com/jquery-2.1.1.min.js")
+		//- Importacion de JS main dentro de la carpeta JS
 		script(src="js/main.js")
 
