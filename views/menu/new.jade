@@ -5,7 +5,7 @@ block contenido
 		div(class="col-md-5 center-block no-float top-space text-left")
 			h1 Agregar Producto
 			//- Definicion del formulario Agregar Producto
-			form(method="post" action="/menu" style="margin-top:1.5em;")
+			form(method="post" action="/menu" style="margin-top:1.5em;" enctype="multipart/form-data")
 				div(class="form-group")
 					label Nombre
 					input(type="text" name="title" placeholder="Nombre del Producto" class="form-control")
@@ -15,6 +15,9 @@ block contenido
 				div(class="form-group")
 					label Costo
 					input(type="number" name="pricing" placeholder="Costo de Producto" class="form-control")
+				div(class="form-group")
+					label Imagen del producto
+					input(type="file" name="image_product")
 				div(class="form-group")
 					label Contraseña
 					input(type="password" name="password" placeholder="Contraseña" class="form-control")

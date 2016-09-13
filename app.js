@@ -2,6 +2,19 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
+var multer = require('multer');
+var cloudinary = require("cloudinary");
+
+/* Declaracion de Multer */
+var upload = multer({ dest: './uploads' });
+var middleware_upload = upload.single('image_product');
+
+/* Configuracion de Cloudinary */
+cloudinary.config({
+	cloud_name: "ivanlynch",
+	api_key: "358116339799319",
+	api_secret: "FnEN3Jtb6Q4m1D9e7IoAffr7WPk"
+})
 
 //Variable con la ejecucion de Express
 var app = express();
@@ -12,6 +25,7 @@ mongoose.connect('mongodb://localhost/paginawebconnode');
 /* Declaramos que  express va a utilizar body-parser */
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
 
 //Definicion del Schema que se va a usar para almacenar los datos en MongoDB
 var productSchema = {
@@ -37,7 +51,7 @@ app.get("/", function(solicitud, respuesta){
 });
 
 /* Despues de hacer un post en Menu te hace el render al Index */
-app.post("/menu", function(solicitud, respuesta){
+app.post("/menu", middleware_upload, function(solicitud, respuesta){
 
 	/* Requerimos la contraseña para hacer un post*/
 	if(solicitud.body.password == "12345678"){
@@ -54,11 +68,24 @@ app.post("/menu", function(solicitud, respuesta){
 		/* Creacion del Objeto */
 		var product = new Product(data);
 
-		/* Guardó el objeto y hace render al index */
-		product.save(function(error){
-			console.log(product);
-			respuesta.render("index");
-		});
+		/* Si se adjunta una imagen al formulario */
+		if(solicitud.file){
+
+			/* Se pasa la ruta del archivo local a subir */
+		    cloudinary.uploader.upload(solicitud.file.path,
+		        function(result) {
+		        	
+		            product.imageUrl = result.url;
+
+		            /* Guardó el objeto y hace render al index */
+		            product.save(function(err){
+		                console.log(product);
+		                respuesta.redirect("/menu");
+		            });
+		        }
+		    );
+		}
+		
 	}else{ /* Si la contraseña no coincide nos hace el render a menu/new */
 		respuesta.render("menu/new")
 	}
