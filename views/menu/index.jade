@@ -1,0 +1,12 @@
+//- Extendemos del layout
+extends ../layout.jade
+//- Bloqueamos el contenido de layout para que no sea modificable.
+block contenido
+	h2(class='pacifico big blue') Menú
+	p Productos de calidad en tu mesa
+	//- Iteración sobre la base de datos, nos devuelve los productos almacenados
+	each product in products
+		div(class="col-md-4 col-sm-6 col-xs-12 inline-block")
+			h3(class="pacifico")= product.title
+			img(src="#{ product.imageUrl }" class="col-xs-7 col-md-4 no-float")
+			p(style="margin-top:1em;") #[small(class="lato small") #{product.pricing}USD ]

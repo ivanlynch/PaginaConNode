@@ -50,6 +50,14 @@ app.get("/", function(solicitud, respuesta){
 	respuesta.render("index");
 });
 
+/* Devuelve los productos que se almacenaron */
+app.get("/menu", function(solicitud, respuesta){
+	Product.find(function(error, documento){
+		if(error){ console.log(error);}
+		respuesta.render("menu/index", { products: documento })
+	});
+});
+
 /* Despues de hacer un post en Menu te hace el render al Index */
 app.post("/menu", middleware_upload, function(solicitud, respuesta){
 
@@ -65,7 +73,7 @@ app.post("/menu", middleware_upload, function(solicitud, respuesta){
 			pricing: solicitud.body.pricing
 		}
 
-		/* Creacion del Objeto */
+		/* Crea una instancia del modelo para almacenar un objeto */
 		var product = new Product(data);
 
 		/* Si se adjunta una imagen al formulario */
@@ -74,10 +82,10 @@ app.post("/menu", middleware_upload, function(solicitud, respuesta){
 			/* Se pasa la ruta del archivo local a subir */
 		    cloudinary.uploader.upload(solicitud.file.path,
 		        function(result) {
-		        	
+
 		            product.imageUrl = result.url;
 
-		            /* Guardó el objeto y hace render al index */
+		            /* Guardó el objeto producto y hace render al index */
 		            product.save(function(err){
 		                console.log(product);
 		                respuesta.redirect("/menu");
