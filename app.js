@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var cloudinary = require("cloudinary");
+var app_password = "12345678";
 
 /* Declaracion de Multer */
 var upload = multer({ dest: './uploads' });
@@ -58,11 +59,28 @@ app.get("/menu", function(solicitud, respuesta){
 	});
 });
 
+/* Panel de Administrador */
+app.post("/admin", function(solicitud, respuesta){
+	if(solicitud.body.password == app_password){
+		Product.find(function(error, documento){
+		if(error){ console.log(error);}
+		respuesta.render("admin/index", { products: documento })
+		});
+	}else{
+		respuesta.redirect("/");
+	}
+});
+
+/* Inicio de Administrador */
+app.get("/admin", function(solicitud, respuesta){
+	respuesta.render("admin/form")
+});
+
 /* Despues de hacer un post en Menu te hace el render al Index */
 app.post("/menu", middleware_upload, function(solicitud, respuesta){
 
 	/* Requerimos la contraseña para hacer un post*/
-	if(solicitud.body.password == "12345678"){
+	if(solicitud.body.password == app_password){
 
 		/* Declaracion del objeto que se utiliza para almacenar
 		   los datos que vienen del formulario /menu/new */

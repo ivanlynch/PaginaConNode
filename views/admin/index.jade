@@ -1,0 +1,25 @@
+extends ../layout.jade
+block contenido
+	h1 Panel de Administración
+	//- Barra del panel con la descripcion de las columnas
+	table(class="table")
+		caption Productos Actuales
+		thead
+			tr
+				th #
+				th Nombre
+				th Descripción
+				th Precio
+				th Imágenes
+				th Acciones
+		//- Filas del panel
+		tbody
+			each product in products
+				tr
+					td= product.id
+					td= product.title
+					td= product.description
+					td= product.pricing
+					td
+						a(href="#{product.imageUrl}" class="btn") Ver Imagen
+					td Editar - Eliminar
