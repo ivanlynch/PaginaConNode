@@ -27,6 +27,8 @@ mongoose.connect('mongodb://localhost/paginawebconnode');
 /* Declaramos que  express va a utilizar body-parser */
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
+/* Utilizamos method override para hacer update sobre post */
 app.use(method_override("_method"));
 
 //Definicion del Schema que se va a usar para almacenar los datos en MongoDB
@@ -60,26 +62,37 @@ app.get("/menu", function(solicitud, respuesta){
 	});
 });
 
-/* Edit de la imagen */
+/* Render a la vista Edit  */
 app.get("/menu/edit/:id", function(solicitud, respuesta){
-	var id_producto = solicitud.params.id;
-	Product.findOne({"_id": id_producto}, function(error, producto){
+
+	/* Buscamos dentro del model el objeto */
+	Product.findOne({"_id": solicitud.params.id }, function(error, producto){
+		/* hacemos render a la vista edit con los valores */
 		respuesta.render("menu/edit", { product: producto});
 	});
 });
 
+/* Vista Edit */
 app.put("/menu/:id", middleware_upload, function(solicitud, respuesta){
+
+	/* Comprobamos que sea el administrador */
 	if(solicitud.body.password == app_password){
+
+		/* Traemos los valores que vamos a modificar */
 		var data = {
 			title: solicitud.body.title,
 			description: solicitud.body.description,
 			pricing: solicitud.body.pricing
 		};
 
+		/* Buscamos el objeto por el ID y le pasamos los valores modificados */
 		Product.update({"_id": solicitud.params.id}, data, function(){
+
+			/* Hacemos render al menu */
 			respuesta.redirect("/menu");
 		});
 	}else{
+		/* En caso de que algo falle nos envia a la pagina principal*/
 		respuesta.redirect("/");
 	}
 	
@@ -87,12 +100,20 @@ app.put("/menu/:id", middleware_upload, function(solicitud, respuesta){
 
 /* Panel de Administrador */
 app.post("/admin", function(solicitud, respuesta){
+
+	/* Si la contraseña del input es correcta */
 	if(solicitud.body.password == app_password){
+
+		/* Buscamos todos los objetos de la base de datos */
 		Product.find(function(error, documento){
-		if(error){ console.log(error);}
-			respuesta.render("admin/index", { products: documento })
-		});
+			/* En caso de error lo mostramos */
+			if(error){ console.log(error);}
+				/* Le enviamos a la vista index todos los objetos */
+				respuesta.render("admin/index", { products: documento })
+			});
 	}else{
+
+		/* Si la contraseña es incorrecta nos envia a la pagina principal */
 		respuesta.redirect("/");
 	}
 });
@@ -146,6 +167,36 @@ app.post("/menu", middleware_upload, function(solicitud, respuesta){
 /* Render del Menu*/
 app.get("/menu/new", function(solicitud, respuesta){
 	respuesta.render("menu/new");
+});
+
+/* Vista Eliminar */
+app.get("/menu/delete/:id", function(solicitud, respuesta){
+	/* Buscamos un item en la base de datos con el id que recibimos como parametro */
+	Product.findOne({"_id": solicitud.params.id}, function(error, producto){
+		/* Una vez que lo encontramos, le enviamos a la vista el objeto entero */
+		respuesta.render("menu/delete", { producto: producto});
+	});
+});
+
+/* Vista con los datos de objeto Eliminar */
+app.delete("/menu/:id", middleware_upload, function(solicitud,respuesta){
+
+	/* Si la contraseña del input es correcta */
+	if(solicitud.body.password == app_password){
+
+		/* Eliminamos del model el objeto que sea igual al id que recibimos en la solicitud*/
+		Product.remove({"_id": solicitud.params.id}, function(error){
+
+			/* En caso de error lo mostramos*/
+			if(error){console.log(error); }
+
+			/* Nos envia al menu principal */
+			respuesta.redirect("/menu");
+		});
+	}else{
+		/* Si la contraseña es incorrecta nos envia a la pagina principal */
+		respuesta.redirect("/");
+	}
 });
 
 //Le decimos a express que escuche en el puerto 8080
