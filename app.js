@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var cloudinary = require("cloudinary");
+var method_override = require("method-override");
 var app_password = "12345678";
 
 /* Declaracion de Multer */
@@ -26,7 +27,7 @@ mongoose.connect('mongodb://localhost/paginawebconnode');
 /* Declaramos que  express va a utilizar body-parser */
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-
+app.use(method_override("_method"));
 
 //Definicion del Schema que se va a usar para almacenar los datos en MongoDB
 var productSchema = {
@@ -59,12 +60,37 @@ app.get("/menu", function(solicitud, respuesta){
 	});
 });
 
+/* Edit de la imagen */
+app.get("/menu/edit/:id", function(solicitud, respuesta){
+	var id_producto = solicitud.params.id;
+	Product.findOne({"_id": id_producto}, function(error, producto){
+		respuesta.render("menu/edit", { product: producto});
+	});
+});
+
+app.put("/menu/:id", middleware_upload, function(solicitud, respuesta){
+	if(solicitud.body.password == app_password){
+		var data = {
+			title: solicitud.body.title,
+			description: solicitud.body.description,
+			pricing: solicitud.body.pricing
+		};
+
+		Product.update({"_id": solicitud.params.id}, data, function(){
+			respuesta.redirect("/menu");
+		});
+	}else{
+		respuesta.redirect("/");
+	}
+	
+});
+
 /* Panel de Administrador */
 app.post("/admin", function(solicitud, respuesta){
 	if(solicitud.body.password == app_password){
 		Product.find(function(error, documento){
 		if(error){ console.log(error);}
-		respuesta.render("admin/index", { products: documento })
+			respuesta.render("admin/index", { products: documento })
 		});
 	}else{
 		respuesta.redirect("/");
@@ -105,7 +131,6 @@ app.post("/menu", middleware_upload, function(solicitud, respuesta){
 
 		            /* Guardó el objeto producto y hace render al index */
 		            product.save(function(err){
-		                console.log(product);
 		                respuesta.redirect("/menu");
 		            });
 		        }
@@ -121,7 +146,7 @@ app.post("/menu", middleware_upload, function(solicitud, respuesta){
 /* Render del Menu*/
 app.get("/menu/new", function(solicitud, respuesta){
 	respuesta.render("menu/new");
-})
+});
 
 //Le decimos a express que escuche en el puerto 8080
 app.listen(8080);

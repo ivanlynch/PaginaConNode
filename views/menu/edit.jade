@@ -1,0 +1,25 @@
+//- Extendemos del layout
+extends ../layout.jade
+//- Bloqueamos el contenido de layout para que no sea modificable.
+block contenido
+		div(class="col-md-5 center-block no-float top-space text-left")
+			h1 Editar Producto
+			//- Definicion del formulario Editar Producto
+			form(method="POST" action="/menu/#{product.id}?_method=PUT" style="margin-top:1.5em;" enctype="multipart/form-data")
+				div(class="form-group")
+					label Nombre
+					input(type="text" name="title" value="#{product.title}" placeholder="Nombre del Producto" class="form-control")
+				div(class="form-group")
+					label Descripción
+					textarea(name="description" placeholder="Descripción del Producto" class="form-control")=product.description
+				div(class="form-group")
+					label Costo
+					input(type="number" name="pricing" value="#{product.pricing}" placeholder="Costo de Producto" class="form-control")
+				div(class="form-group")
+					label Imagen del producto
+					input(type="file" name="image_product")
+				div(class="form-group")
+					label Contraseña
+					input(type="password" name="password" placeholder="Contraseña" class="form-control")
+				div(class="form-group text-right")
+					input(type="submit" class="btn btn-info" value="Guardar")
