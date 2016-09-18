@@ -78,19 +78,38 @@ app.put("/menu/:id", middleware_upload, function(solicitud, respuesta){
 	/* Comprobamos que sea el administrador */
 	if(solicitud.body.password == app_password){
 
-		/* Traemos los valores que vamos a modificar */
+		/* Guardamos los valores del form en un objeto data */
 		var data = {
 			title: solicitud.body.title,
 			description: solicitud.body.description,
 			pricing: solicitud.body.pricing
 		};
 
-		/* Buscamos el objeto por el ID y le pasamos los valores modificados */
-		Product.update({"_id": solicitud.params.id}, data, function(){
+		/* En caso de que ya exista una imagen */
+		if(solicitud.file){
+			/* Hacemos el upload en cloudinary */
+			cloudinary.uploader.upload(solicitud.file.path, function(result){
+				/* Tomamos la url existente y guardamos la url que obtenemos de cloudinary */
+				data.imageUrl = result.url;
 
-			/* Hacemos render al menu */
-			respuesta.redirect("/menu");
-		});
+				/* Buscamos el objeto por el ID y le pasamos los valores modificados */
+				Product.update({"_id": solicitud.params.id}, data, function(){
+
+				/* Hacemos render al menu */
+					respuesta.redirect("/menu");
+				});
+			});
+
+		}else{
+
+			/* Buscamos el objeto por el ID y le pasamos los valores modificados */
+			Product.update({"_id": solicitud.params.id}, data, function(){
+
+				/* Hacemos render al menu */
+				respuesta.redirect("/menu");
+			});
+		}
+
 	}else{
 		/* En caso de que algo falle nos envia a la pagina principal*/
 		respuesta.redirect("/");
@@ -143,7 +162,7 @@ app.post("/menu", middleware_upload, function(solicitud, respuesta){
 
 		/* Si se adjunta una imagen al formulario */
 		if(solicitud.file){
-
+			console.log(solicitud.file.path);
 			/* Se pasa la ruta del archivo local a subir */
 		    cloudinary.uploader.upload(solicitud.file.path,
 		        function(result) {
@@ -156,6 +175,13 @@ app.post("/menu", middleware_upload, function(solicitud, respuesta){
 		            });
 		        }
 		    );
+		}else{
+
+			/* Guardó el objeto producto y hace render al index */
+		            product.save(function(err){
+		                respuesta.redirect("/menu");
+		            });
+
 		}
 		
 	}else{ /* Si la contraseña no coincide nos hace el render a menu/new */
