@@ -6,6 +6,8 @@ var multer = require('multer');
 var cloudinary = require("cloudinary");
 var method_override = require("method-override");
 var app_password = "12345678";
+var Schema = mongoose.Schema;
+
 
 /* Declaracion de Multer */
 var upload = multer({ dest: './uploads' });
@@ -32,12 +34,22 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(method_override("_method"));
 
 //Definicion del Schema que se va a usar para almacenar los datos en MongoDB
-var productSchema = {
+var productSchemaJSON = {
 	title: String,
 	description: String,
 	imageUrl: String,
 	pricing: Number
 };
+
+var productSchema = new Schema(productSchemaJSON);
+
+productSchema.virtual("image.url").get(function(){
+	if(this.imageUrl === "" || this.imageUrl === "data.png"){
+		return "data.png";
+	}
+
+	return this.imageUrl;
+});
 
 //Declaracion del model Product
 var Product = mongoose.model("Product", productSchema);
@@ -153,7 +165,6 @@ app.post("/menu", middleware_upload, function(solicitud, respuesta){
 		var data = {
 			title: solicitud.body.title,
 			description: solicitud.body.description,
-			imageUrl: "data.png",
 			pricing: solicitud.body.pricing
 		}
 
